@@ -14,7 +14,7 @@ module t;
     wire outw;
 
     initial begin
-        $dumpfile("test.vcd");  // vcd name   
+        $dumpfile("test.vcd");// vcd name   
         $dumpvars(0,t); // testbench module name
         ain=0;
         bin=0;
@@ -26,6 +26,6 @@ module t;
         #1 ain={$random}%2;
         #3 bin={$random}%2;
     end
-    always # 10000  select=!select;
+    always #10000  select=!select;
     muxtwo m(.out(outw),.a(ain),.b(bin),.sl(select));
 endmodule
