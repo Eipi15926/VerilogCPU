@@ -1,5 +1,11 @@
-module PC(addr,new_addr);
-    input [31:0] addr;
-    output [31:0] new_addr;
-    assign new_addr = addr + 32'd4;
+module PC(CLK,Address_in,Address_out);
+    input CLK;
+    input [31:0] Address_in;
+    output reg [31:0] Address_out;
+
+    always@(posedge CLK)
+    begin
+        Address_out<=Address_in;
+    end
+
 endmodule
