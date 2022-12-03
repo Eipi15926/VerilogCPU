@@ -1,8 +1,7 @@
 module t;
     reg [31:0] ain,bin,select;
     reg clock;
-    wire[31:0] sumtest;
-    wire ctest;
+    wire [31:0] outtest;
 
     initial begin
         $dumpfile("add_test.vcd");  // vcd name   
@@ -18,5 +17,5 @@ module t;
         #3 bin={$random}%2;
     end
     always # 10000  select=!select;
-    add ad161(.a(ain),.b(bin),.sum(sumtest),.c(ctest));
+    PC PCADD(.addr(ain),.new_addr(outtest));
 endmodule
