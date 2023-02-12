@@ -1,4 +1,4 @@
-module muxtwo (I0,I1,ctrl,out);
+module MUXTWO (I0,I1,ctrl,out);
 	input[width-1:0] I0,I1;
 	input ctrl;
 	output reg[width-1:0] out;

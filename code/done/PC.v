@@ -7,9 +7,9 @@ module PC(Clock,Reset,Address_in,Pc_reg);
     initial begin
         Pc_reg <= 0;
     end
-    always@(posedge Clock or negedge Reset)
+    always@(posedge Clock or posedge Reset)
     begin
-        if (!Reset) //如果为0则初始化PC，否则接受新地址
+        if (Reset) //如果为0则初始化PC，否则接受新地址
         begin  
             Pc_reg <= 0;  
         end  

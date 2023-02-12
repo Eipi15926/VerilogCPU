@@ -2,11 +2,15 @@ module IM(addr,instr);/*input : address in IM, output : instruction in address a
     input [31:0] addr;
     output [31:0] instr;
     wire[31:0]Rom[31:0];
-    assign Rom[5'h00]=32'h20010008;//addi $1,$0,8 $1=8
-    assign Rom[5'h01]=32'h3402000C;//ori $2,$0,12 $2=12
-    assign Rom[5'h02]=32'h00221820;//add $3,$1,$2 $3=20
-    assign Rom[5'h03]=32'h00412022;//sub $4,$2,$1 $4=4
-    assign Rom[5'h04]=32'h00222824;//and $5,$1,$2 $5=8
+    assign Rom[5'h00]=32'b00000000001000100001100000011010;//add $1,$2,$3
+    assign Rom[5'h01]=32'b00000000011000100001100000011010;//add $3,$2,$3
+    assign Rom[5'h02]=32'b00001000000000000000000000000000;//J 0(correct)
+    //assign Rom[5'h03]=32'b10001100100001010000000000000000; //$5=M[$4+offset]
+    //assign Rom[5'h00]=32'h20010008;//addi $1,$0,8 $1=8
+    //assign Rom[5'h02]=32'h3402000C;//ori $2,$0,12 $2=12
+    assign Rom[5'h03]=32'h00221820;//add $3,$1,$2 $3=20
+    assign Rom[5'h04]=32'h00412022;//sub $4,$2,$1 $4=4
+    //assign Rom[5'h04]=32'h00222824;//and $5,$1,$2 $5=8
     assign Rom[5'h05]=32'h00223025;//or $6,$1,$2 $6=12
     assign Rom[5'h06]=32'h14220002;//bne $1,$2,2
     assign Rom[5'h07]=32'hXXXXXXXX;

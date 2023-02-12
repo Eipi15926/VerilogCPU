@@ -1,45 +1,72 @@
 `include "ADD.v"
 `include "ALU.v"
-`include "ALUcu.v"
+`include "ALUCU.v"
 `include "CU.v"
 `include "DM.v"
 `include "IM.v"
-`include "muxtwo.v"
+`include "MUXTWO.v"
 `include "PC.v"
+`include "RF.v"
 `include "SHL2.v"
-`include "sig16_32.v"
-`include "PCadd4.v"
+`include "SIG16_32.v"
+`include "AND.v"
 
-module main(clock,reset);
-    input clock,reset;
-    wire [31:0]addi,addo,inst;
-    reg [31:0]addr_reg,ofst_reg;
+module main(Clock,Reset);
+    input Clock,Reset;
 
-    initial begin
-        ofst_reg =0;
-    end
-    PC pc(clock,reset,addi,addo);
-    ADD add1(.a(32'h4),.b(addo),.sum(addi));
-    IM im(addo,inst);
-    //PCadd4 pa4(ofst_reg,addi);
+    wire RegDst,Jump,RegWr,Branch,MemtoReg,MemWr,MemRd,ALUSrc;
+    wire AluZ,MuxCtrl;    
+    wire [1:0] ALUOp;
+    wire [2:0]AluCtrl;
+    wire [4:0]WRi;
+    wire [27:0]ShlOut;
+    wire [31:0]PcI,PcAddr,Inst,Add1C,TransAddr;
+    wire [31:0]Data,RdO,AluC,WdI,AluA,AluB,Sig32,Add2B,Add2C,MuxOut;
+
+    assign TransAddr={Add1C[31:28],ShlOut};
+
+    PC Pc(Clock,Reset,PcI,PcAddr);
+    CU Cu(Inst[31:26],RegDst, RegWr, ALUSrc, MemRd, MemWr, MemtoReg, Branch, Jump, ALUOp);
+    ALUCU Alucu(.inst(Inst[5:0]),.aluop(ALUOp),.ctrl(AluCtrl));
+
+    MUXTWO Mt1(Inst[20:16],Inst[15:11],RegDst,WRi);
+    MUXTWO Mt2(Data,Sig32,ALUSrc,AluB);
+    MUXTWO MT3(AluC,RdO,MemtoReg,WdI);
+    MUXTWO MT4(Add1C,Add2C,MuxCtrl,MuxOut);
+    MUXTWO MT5(MuxOut,TransAddr,Jump,PcI);
+
+    SHL2 Shl21(Inst[25:0],ShlOut);
+    SHL2 SHl22(Sig32,Add2B);
+
+    AND And(Branch,AluZ,MuxCtrl);
+
+    SIG16_32 Sig1632(Inst[15:0],Sig32);
+
+    ADD Add1(.a(32'h4),.b(PcAddr),.sum(Add1C));
+    ADD Add2(.a(Add1C),.b(Add2B),.sum(Add2C));
+
+    ALU Alu(AluA,AluB,AluCtrl,AluC,AluZ);
+
+    IM Im(PcAddr,Inst);
+    DM Dm(MemRd,MemWr,AluC,Data,Rdo,Clock);
+    RF Rf(WdI,Inst[25:21],Inst[20:16],WRi,AluA,Data,Clock,RegWr);
+    
 endmodule
 
 module t;
     reg clock;
     reg reset;
-    wire [31:0]add_i=7'h0,add_o=7'h0;
-    reg [31:0]pcr;
     main cpu(clock,reset);
 
     initial begin
         $dumpfile("main_test.vcd");  // vcd name   
         $dumpvars(0,t); // testbench module name
         clock=0;
-        reset=0;
-        #10;
-        clock=1;reset=0;
-        #10;
         reset=1;
+        #5;
+        clock=1;reset=1;
+        #5;
+        reset=0;
         clock=0;
         forever #5 clock =~ clock;
     end

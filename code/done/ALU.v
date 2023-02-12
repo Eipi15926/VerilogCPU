@@ -9,15 +9,16 @@ module ALU (a,b,ctrl,out,zero);
 		case(ctrl)
 			3'b000: out=a&b;
 			3'b001: out=a|b;
-			3'b010: out=a+b;
-			3'b011: out=a-b;
-			3'b100: begin
+			//3'b010: out=a+b;
+			3'b100: out=a+b;
+            3'b110: out=a-b;
+			3'b011: begin
 				if (a<b)
 					out=1;
 				else
 					out=0;
 			end
-			default: out=~a;//notÊÇÒ»ÔªÔËËã£¬ÕâÀïÄ¬ÈÏÈç¹ûÖ»ÓĞÒ»¸öÊäÈë¾ÍÊÇaºÃÁË
+			default: out=~a;//notï¿½ï¿½Ò»Ôªï¿½ï¿½ï¿½ã£¬ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½aï¿½ï¿½ï¿½ï¿½
 		endcase
 		if (out==0)
 			zero=1;

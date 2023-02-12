@@ -1,9 +1,9 @@
-module ALUcu(inst,ALUop,ctrl);
+module ALUCU(inst,aluop,ctrl);
 	input[5:0] inst;
-	input[1:0] ALUop;
+	input[1:0] aluop;
 	output reg[3-1:0] ctrl;
-    always @(inst or ALUop) begin
-        casex(ALUop) 
+    always @(inst or aluop) begin
+        casex(aluop) 
             2'b00: ctrl <= 100;
             2'b01: ctrl <= 110;
             2'b1x: begin
