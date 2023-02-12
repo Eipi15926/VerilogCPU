@@ -1,6 +1,7 @@
-module IM(addr,instr);/*input : address in IM, output : instruction in address addr*/
-    input [31:0] addr;
-    output [31:0] instr;
+module IM(addr,w,r,wd,rd);/*input : address in IM, output : instruction in address addr*/
+    input [31:0] addr,wd;
+    input w,r;
+    output reg[31:0] rd;
     wire[31:0]Rom[31:0];
     assign Rom[5'h00]=32'b00000000001000100001100000011010;//add $1,$2,$3
     assign Rom[5'h01]=32'b00000000011000100001100000011010;//add $3,$2,$3
@@ -38,5 +39,12 @@ module IM(addr,instr);/*input : address in IM, output : instruction in address a
     assign Rom[5'h1D]=32'hXXXXXXXX;
     assign Rom[5'h1E]=32'hXXXXXXXX;
     assign Rom[5'h1F]=32'hXXXXXXXX;
-    assign instr = Rom[addr[6:2]];
+    always @(*)begin
+        if (r)
+            rd = Rom[addr[6:2]];
+    end
+    always @(*)begin
+        if (w)
+            Rom[addr[6:2]]=wd;
+    end
 endmodule

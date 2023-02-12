@@ -1,7 +1,7 @@
-module RF(wd,rr1,rr2,wr,rd1,rd2,clk,regwr);
+module RF(wd,rr1,rr2,wr,rd1,rd2,clk,w);
     input[31:0]wd;
     input[4:0] rr1,rr2,wr;
-    input clk,regwr;
+    input clk,w;
     output reg[31:0] rd1,rd2;
 
     reg [31:0]RD1,RD2;
@@ -18,21 +18,15 @@ module RF(wd,rr1,rr2,wr,rd1,rd2,clk,regwr);
             end
         RFReg[5'h02]=32'h0123;
     end
-
     always @(posedge clk)begin
-        # 0.1
         RD1 = RFReg[rr1];
         RD2 = RFReg[rr2];
-        # 0.1
-        if (regwr)
-            begin
-                RFReg[wr] = wd;
-                //RD1 = RFReg[WR];
-                //RD2 = WD;
-            end
         rd1=RD1;
-        rd2=RD2;
-        show = RFReg[5'h03];
+        rd2=RD2; 
+    end
+    always @(posedge clk)begin        
+        if (w)
+            RFReg[wr] = wd;
     end
 
 endmodule

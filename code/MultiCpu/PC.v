@@ -1,14 +1,12 @@
-module PC(clock,address_in,pc_reg);
-    input clock;
-    input [31:0] address_in;
-    output reg[31:0] pc_reg;
-
-    initial begin
-        pc_reg <= 0;
+module PC(clk,w,d,q);
+    input clk,w;
+    input[31:0]d;
+    output reg[31:0]q;
+    initial q=0;
+    always@(posedge clk)
+    begin
+        if (w) begin
+            q <= d;
+        end
     end
-    always@(posedge clock)
-    begin  
-        pc_reg <= address_in;  
-    end
-
 endmodule
