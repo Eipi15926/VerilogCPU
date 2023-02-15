@@ -1,67 +1,70 @@
 `include "ADD.v"
 `include "ALU.v"
 `include "ALUCU.v"
+`include "AND.v"
 `include "CU.v"
-`include "DM.v"
 `include "IM.v"
+`include "IR.v"
 `include "MUXTWO.v"
+`include "MUXTHREE.v"
+`include "MUXFOUR.v"
+`include "OR.v"
 `include "PC.v"
 `include "RF.v"
 `include "SHL2.v"
 `include "SIG16_32.v"
-`include "AND.v"
+`include "TSR.v"
 
-module main(Clock,Reset);
-    input Clock,Reset;
 
-    wire RegDst,Jump,RegWr,Branch,MemtoReg,MemWr,MemRd,ALUSrc;
-    wire AluZ,MuxCtrl;
-    wire [1:0] ALUOp;
+module main(Clock);
+    input Clock;
+    wire IorD,IRWr,PCWr,PCWrCond,RegDst,RegWr,ALUSrcA,MemtoReg,MemRd,MemWr,PcW,AO,AluZ;
+    wire[1:0]ALUOp,ALUSrcB,PCSrc;
     wire [2:0]AluCtrl;
-    wire [4:0]WRi;
     wire [27:0]ShlOut;
-    wire [31:0]PcI,PcAddr,Inst,Add1C,TransAddr;
-    wire [31:0]Data,RdO,AluC,WdI,AluA,AluB,Sig32,Add2B,Add2C,MuxOut;
+    wire [31:0]PcD,PcQ;
+    wire [31:0]Inst;
+    wire [31:0]Addr,Rd,MdrQ,AluOut,Sig32,Mux2;
+    wire [31:0]AQ,AluA,AluB,AluC,MuxB;
+    wire [31:0]WR,Wd,Rd1,Rd2,Bqwd;
 
-    assign TransAddr={Add1C[31:28],ShlOut};
-
-    PC Pc(Clock,PcI,PcAddr);
-    CU Cu(Inst[31:26],RegDst, RegWr, ALUSrc, MemRd, MemWr, MemtoReg, Branch, Jump, ALUOp);
-    ALUCU Alucu(.inst(Inst[5:0]),.aluop(ALUOp),.ctrl(AluCtrl));
-
-    MUXTWO Mt1(Inst[20:16],Inst[15:11],RegDst,WRi);
-    MUXTWO Mt2(Data,Sig32,ALUSrc,AluB);
-    MUXTWO MT3(AluC,RdO,MemtoReg,WdI);
-    MUXTWO MT4(Add1C,Add2C,MuxCtrl,MuxOut);
-    MUXTWO MT5(MuxOut,TransAddr,Jump,PcI);
+    PC Pc(Clock,PcW,PcD,PcQ);
+    IR Ir(IRWr,Clock,Rd,Inst);
+    IM Im(Addr,MemWr,MemRd,Bqwd,Rd);
+    RF Rf(Wd,Inst[25:21],Inst[20:16],WR,Rd1,Rd2,Clock,RegWr);
+    ALU Alu(AluA,AluB,AluCtrl,AluC,AluZ);
+    ALUCU Alucu(Inst,ALUOp,AluCtrl);
+    CU Cu(Clock, RegWr,MemRd,MemWr,RegDst,MemtoReg,IRWr,IorD,PCWr,PCWrCond,ALUSrcA,PCSrc,ALUOp,ALUSrcB,Inst[31:26]);
 
     SHL2 Shl21(Inst[25:0],ShlOut);
-    SHL2 SHl22(Sig32,Add2B);
+    SHL2 Shl22(Sig32,MuxB);
+    MUXTWO Muxtwo1(PcQ,AluOut,IorD,Addr);
+    MUXTWO Muxtwo2(Inst[20:16],Inst[15:11],RegDst,WR);
+    MUXTWO Muxtwo3(AluOut,MdrQ,MemtoReg,Wd);
+    MUXTWO Muxtwo4(PcQ,AQ,ALUSrcA,AluA);
+    MUXTHREE Muxthree(AluC,AluOut,Mux2,PCSrc,PcD);
+    MUXFOUR Muxfour(Bqwd,32'b100,Sig32,MuxB,ALUSrcB,AluB);
 
-    AND And(Branch,AluZ,MuxCtrl);
-
+    TSR A(Clock,Rd1,AQ);
+    TSR B(Clock,Rd2,Bqwd);
+    TSR MDR(Clock,Rd,MdrQ);
+    TSR ALUOut(Clock,AluC,AluOut);
     SIG16_32 Sig1632(Inst[15:0],Sig32);
+    AND And(PCWrCond,AluZ,AO);
+    OR Or(PCWr,AO,PcW);
 
-    ADD Add1(.a(32'h4),.b(PcAddr),.sum(Add1C));
-    ADD Add2(.a(Add1C),.b(Add2B),.sum(Add2C));
 
-    ALU Alu(AluA,AluB,AluCtrl,AluC,AluZ);
-
-    IM Im(PcAddr,Inst);
-    DM Dm(MemRd,MemWr,AluC,Data,Rdo,Clock);
-    RF Rf(WdI,Inst[25:21],Inst[20:16],WRi,AluA,Data,Clock,RegWr);
-    
 endmodule
 
 module t;
     reg clock;
     reg reset;
-    main cpu(clock,reset);
+    main cpu(clock);
 
     initial begin
         $dumpfile("main_test.vcd");  // vcd name   
         $dumpvars(0,t); // testbench module name
-        clock=1;
+        clock=0;
         forever #5 clock =~ clock;
     end
 endmodule

@@ -1,5 +1,5 @@
-module OR(a,b,c);
-input a,b;
-output c;
-assign c = a | b;
+module OR(oa,ob,oc);
+input oa,ob;
+output oc;
+assign oc = oa|ob;
 endmodule

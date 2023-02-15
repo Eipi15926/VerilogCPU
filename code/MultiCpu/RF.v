@@ -18,11 +18,12 @@ module RF(wd,rr1,rr2,wr,rd1,rd2,clk,w);
             end
         RFReg[5'h02]=32'h0123;
     end
-    always @(posedge clk)begin
+    always @(*)begin
         RD1 = RFReg[rr1];
         RD2 = RFReg[rr2];
         rd1=RD1;
         rd2=RD2; 
+        show=RFReg[5'h03];
     end
     always @(posedge clk)begin        
         if (w)

@@ -2,7 +2,7 @@ module ALU (a,b,ctrl,out,zero);
 	input[width-1:0] a,b;
 	input[3-1:0] ctrl;
 	output reg[width-1:0] out;
-	output reg[1:0]zero;
+	output reg zero;
 	parameter width=32;
 
 	always @(a or b or ctrl) begin

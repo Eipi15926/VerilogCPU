@@ -2,11 +2,17 @@ module PC(clk,w,d,q);
     input clk,w;
     input[31:0]d;
     output reg[31:0]q;
-    initial q=0;
+    reg[31:0]tmp;
+    initial begin
+        q=0;tmp=0;
+    end
     always@(posedge clk)
     begin
         if (w) begin
-            q <= d;
+            q <= tmp;
         end
+    end
+    always @(d)begin
+        tmp<=d;
     end
 endmodule
