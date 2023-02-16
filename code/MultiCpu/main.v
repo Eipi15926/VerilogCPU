@@ -28,6 +28,8 @@ module main(Clock);
     wire [31:0]AQ,AluA,AluB,AluC,MuxB;
     wire [31:0]WR,Wd,Rd1,Rd2,Bqwd;
 
+    assign Mux2={PcQ[31:28],ShlOut};
+
     PC Pc(Clock,PcW,PcD,PcQ);
     IR Ir(IRWr,Clock,Rd,Inst);
     IM Im(Addr,MemWr,MemRd,Bqwd,Rd);

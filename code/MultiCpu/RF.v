@@ -26,7 +26,9 @@ module RF(wd,rr1,rr2,wr,rd1,rd2,clk,w);
         show=RFReg[5'h03];
     end
     always @(posedge clk)begin        
+        #0.1
         if (w)
+            #0.1
             RFReg[wr] = wd;
     end
 

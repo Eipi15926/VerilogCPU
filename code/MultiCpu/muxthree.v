@@ -1,4 +1,4 @@
-module muxthree(I0,I1,I2,ctrl,out);
+module MUXTHREE(I0,I1,I2,ctrl,out);
     parameter width=32;
     input[width-1:0] I0,I1,I2;
     input[2-1:0] ctrl;

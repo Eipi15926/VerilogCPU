@@ -1,5 +1,4 @@
-
-module muxfour(I0,I1,I2,I3,ctrl,out);
+module MUXFOUR(I0,I1,I2,I3,ctrl,out);
     parameter width=32;
     input[width-1:0] I0,I1,I2,I3;
     input[2-1:0] ctrl;

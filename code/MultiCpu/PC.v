@@ -8,6 +8,7 @@ module PC(clk,w,d,q);
     end
     always@(posedge clk)
     begin
+        # 0.1
         if (w) begin
             q <= tmp;
         end
