@@ -18,7 +18,7 @@ Here are four folders:
 To compile the `main.v` file, follow these steps:
 
 ```
-bashCopy codeiverilog main.v
+iverilog main.v
 vvp a.out
 ```
 
